@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>SeC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="helper.js" defer></script>
+  <style>
+    td {
+      vertical-align: middle;
+      min-width: 220px;
+    }
+    audio {
+      height: 50px;
+      width: 20vw;
+      min-width: 70px;
+      max-width: 220px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded">
+    <div class="text-center">
+      <h1>SeC: Advancing Complex Video Object Segmentation </br>via Progressive Concept Construction</h1>
+    </div>
+    <!-- <p>
+      <b>Abstract.</b>
+      Video Object Segmentation (VOS) is a core task in computer vision, requiring models to track and segment target objects across video frames. Despite notable advances with recent efforts, current techniques still lag behind human capabilities in handling drastic visual variations, occlusions, and complex scene changes. This limitation arises from their reliance on appearance matching, neglecting the human-like conceptual understanding of objects that enables robust identification across temporal dynamics.
+Motivated by this gap, we propose Segment Concept (SeC), a concept-driven segmentation framework that shifts from conventional feature matching to the progressive construction and utilization of high-level, object-centric representations. SeC employs Large Vision-Language Models (LVLMs) to integrate visual cues across diverse frames, constructing robust conceptual priors. During inference, SeC forms a comprehensive semantic representation of the target based on processed frames, realizing robust segmentation of follow-up frames. 
+Furthermore, SeC adaptively balances LVLM-based semantic reasoning with enhanced feature matching, dynamically adjusting computational efforts based on scene complexity.
+To rigorously assess VOS methods in scenarios demanding high-level conceptual reasoning and robust semantic understanding, we introduce the Semantic Complex Scenarios Video Object Segmentation benchmark (SeCVOS). SeCVOS comprises 140 manually annotated multi-scenario videos designed to challenge models with substantial appearance variations and dynamic scene transformations. Empirical evaluations demonstrate that SeC substantially outperforms state-of-the-art approaches, including SAM 2 and its advanced variants, on both SeCVOS and standard VOS benchmarks. In particular, SeC achieves an 11.5-point improvement over SAM 2.1 on SeCVOS, establishing a new state-of-the-art in concept-aware video object segmentation.
+    </p> -->
+    <div>
+      <p><br /></p>
+      <p style="text-align: center;">
+        <img src="teaser.png" width=100% class="img-fluid">
+      </p>
+      <p><br /></p>
+    </div>
+  </div>
+
+
+  <!-- <div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded">
+    <h2 id="tablecontents" style="text-align: left;">Table of Contents</h2>
+    <div>
+      <li><a href="#Rebuttal" class="btn border-white bg-white fw-bold">Rebuttal: Responses to Reviewers</a></li>
+      <li><a href="#T2S-Mixed" class="btn border-white bg-white fw-bold">[Mixed Pro] Text-to-Song Generation</a></li>
+      <li><a href="#T2S-Inter" class="btn border-white bg-white fw-bold">[Interleaving (A-V)] Text-to-Song Generation </a></li>
+      <li><a href="#T2S-TEST" class="btn border-white bg-white fw-bold">Text-to-Song Generation on the MusicCaps Test Set</a></li>
+        
+    </div>
+  </div> -->
+
+  <div class="container shadow p-5 mb-5 bg-white rounded">
+    <h2>Visualization <a id="Rebuttal" /></h2>
+    <h4> A. Video in the wild </h4>
+    <div class="container shadow p-5 mb-5 bg-white rounded">
+      <div class="container pt-3 table-responsive">
+        <table class="table table-hover" id="gender_table_1">
+          <thead>
+            <tr>
+              <th style="text-align: center">SAM-2</th>
+              <th style="text-align: center">SeC (ours)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/harrypotter.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/harrypotter.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/wukong.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/wukong.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          
+        </table>
+      </div>
+    </div> 
+    
+    <h4> B. SeCVOS </h4>
+    <div class="container shadow p-5 mb-5 bg-white rounded">
+ 
+      <p style="margin-top: 2em">
+        In this section, we present samples generated by both the two-stage and single-stage approaches. Additionally, we provide more examples of two-stage generation results on the MusicCaps Test set. For a more detailed view of the model’s performance, please refer to the section titled 【Text-to-Song Generation on the MusicCaps Test Set】.
+      </p>
+      <div class="container pt-3 table-responsive">
+        <table class="table table-hover" id="gender_table_1">
+          <thead>
+            <tr>
+              <th style="text-align: center">Ground Truth</th>
+              <th style="text-align: center">SAM-2</th>
+              <th style="text-align: center">SeC(ours)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/gt/N_KKXG5NZdg.40.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/N_KKXG5NZdg.40.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/N_KKXG5NZdg.40.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/gt/1AtGI9kSzpY.26.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/1AtGI9kSzpY.26.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/1AtGI9kSzpY.26.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/gt/cfIH74Dotok.5.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/cfIH74Dotok.5.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/cfIH74Dotok.5.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/gt/cEu8y56ywXQ.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/cEu8y56ywXQ.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/cEu8y56ywXQ.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/gt/nxC4ON_D0fI.11.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/nxC4ON_D0fI.11.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/nxC4ON_D0fI.11.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/gt/VbWbRDgphqo.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/VbWbRDgphqo.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/VbWbRDgphqo.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/gt/fzaZPPJmgFU.5.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/fzaZPPJmgFU.5.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/fzaZPPJmgFU.5.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody>
+          <!-- <tbody>
+            <tr height=200px>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/gt/VPDTiVzTdD4.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/sam2/VPDTiVzTdD4.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <video controls controlslist="nodownload" width="400" style="max-width: 100%; height: 200px;">
+                  <source src="data/ours/VPDTiVzTdD4.3.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </td>
+          </tbody> -->
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  
+
+</body>
+
+</html>
